@@ -1,0 +1,6 @@
+1. Se wildfly servers, an anepergopoihseis to jaspi h to integrated-jaspi, vgazei forbidden gia thn arxikh selida kai 404 gia tis uposelides! 
+Epanenergopoieitai ksana me auto: /subsystem=undertow/application-security-domain=other:write-attribute(name=enable-jaspi, value=true) 
+kai auto: 
+/subsystem=undertow/application-security-domain=other:write-attribute(name=integrated-jaspi, value=true)
+
+
