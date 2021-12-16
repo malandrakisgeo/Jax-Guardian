@@ -1,4 +1,5 @@
 # Java-EE-Security
+(Under construction!)
 A customized Java EE security module for Jax-RS endpoints.
 
 Goal: Secure a JAX-RS RESTful API with a Java-EE compliant security module.
