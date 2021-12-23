@@ -1,7 +1,8 @@
 package repository;
 
-import users.Token;
-import users.TokenRepo;
+import tokens.Token;
+import tokens.TokenRepo;
+import users.User;
 
 public class TokenRepository implements TokenRepo {
     @Override
@@ -12,5 +13,20 @@ public class TokenRepository implements TokenRepo {
     @Override
     public boolean removeToken(Token token) {
         return false;
+    }
+
+    @Override
+    public boolean removeToken(String tokenId) {
+        return false;
+    }
+
+    @Override
+    public boolean setTokenAsActive(Token token) {
+        return false;
+    }
+
+    @Override
+    public Token getTokenForUser(User user) {
+        return null;
     }
 }

@@ -35,9 +35,6 @@ public class JaxRsEndpoints {
     @Context
     SecurityContext securityContext;
 
-    @Inject
-    User user;
-
     @GET
     @Path("/getTeachers")
     @RolesAllowed({"principal"})
@@ -58,7 +55,7 @@ public class JaxRsEndpoints {
     @POST
     @PermitAll
     @Path("/login")
-    public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password ){
+    public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password, @HeaderParam("rememberMe") Boolean rememberMe ){
         /*
         * */
 

@@ -1,25 +1,17 @@
 package IdentityStore;
 
-import credentials.TokenCredential;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
-import javax.security.enterprise.SecurityContext;
-import javax.security.enterprise.authentication.mechanism.http.AutoApplySession;
 import javax.security.enterprise.credential.Credential;
-import javax.security.enterprise.credential.BasicAuthenticationCredential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
-import javax.ws.rs.ext.Provider;
-import users.Token;
-import users.TokenRepo;
+
+import tokens.TokenRepo;
 import users.User;
 import users.UserRepo;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 @FirstImplementation
@@ -42,7 +34,7 @@ public class IdentityStoreImplementation implements IdentityStore {
     public CredentialValidationResult validate(Credential credential){
         //userRepo.getUser("a", "b");
         CredentialValidationResult credentialValidationResult;
-        if(credential instanceof TokenCredential){
+        /*if(credential instanceof TokenCredential){
             Token token = this.tokenRepo.getToken(credential.toString());
             if(token==null){
                 return CredentialValidationResult.INVALID_RESULT;
@@ -56,7 +48,7 @@ public class IdentityStoreImplementation implements IdentityStore {
             }
 
             //Decode token and fetch roles of user.
-        }
+        }*/
 
         if(credential instanceof UsernamePasswordCredential){
             User user = this.userRepo.getUser(((UsernamePasswordCredential) credential).getCaller(), ((UsernamePasswordCredential) credential).getPasswordAsString());
@@ -68,8 +60,6 @@ public class IdentityStoreImplementation implements IdentityStore {
                 CredentialValidationResult.Status stt =credentialValidationResult1.getStatus();
                 return credentialValidationResult1;
             }
-            //Fetch roles of the user and generate a token
-            //Save the token in the database
         }
 
         return CredentialValidationResult.INVALID_RESULT;

@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.gmalandrakis</groupId>
+    
     <artifactId>JavaEESecurityModule</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -13,7 +14,7 @@
             <!-- Get all the managed dependencies (which has already been tested to work together) -->
             <!--dependency>
                 <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <artifactId>wildfly-8-with-tools</artifactId>
                 <version>20.0.1.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
