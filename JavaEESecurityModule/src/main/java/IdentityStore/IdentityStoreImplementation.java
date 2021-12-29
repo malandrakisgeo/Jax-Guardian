@@ -32,23 +32,7 @@ public class IdentityStoreImplementation implements IdentityStore {
 
     @Override
     public CredentialValidationResult validate(Credential credential){
-        //userRepo.getUser("a", "b");
         CredentialValidationResult credentialValidationResult;
-        /*if(credential instanceof TokenCredential){
-            Token token = this.tokenRepo.getToken(credential.toString());
-            if(token==null){
-                return CredentialValidationResult.INVALID_RESULT;
-            }
-            if(token.isActive()){
-                //Invalidate token and remove it from the db.
-                credentialValidationResult = new CredentialValidationResult(token.getRelatedUser());
-                this.tokenRepo.removeToken(token);
-                return CredentialValidationResult.INVALID_RESULT;
-                //TODO: Consider taking other measures, such as informing the user that someone might have compromised their account,
-            }
-
-            //Decode token and fetch roles of user.
-        }*/
 
         if(credential instanceof UsernamePasswordCredential){
             User user = this.userRepo.getUser(((UsernamePasswordCredential) credential).getCaller(), ((UsernamePasswordCredential) credential).getPasswordAsString());

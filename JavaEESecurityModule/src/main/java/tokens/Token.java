@@ -1,11 +1,18 @@
 package tokens;
 
-public interface Token {
-    String getValue();
-    String getRelatedUser();
-    Boolean isActive();
+import users.User;
 
-    void setRelatedUser(String username);
+import java.util.Date;
+
+public interface Token {
+
+    String getValue();
+    User getRelatedUser();
+    Boolean isActive();
+    Date activeUntil();
+
+    void setRelatedUser(User username);
     void setActive(Boolean active);
     void setValue(String value);
+    void setActiveUntil(Date date);
 }

@@ -11,7 +11,7 @@ import javax.ws.rs.ext.Provider;
 import java.security.Principal;
 
 
-@PreMatching
+@Provider
 public class CustomContainerRequestFilter implements ContainerRequestFilter {
 
 
@@ -23,12 +23,8 @@ public class CustomContainerRequestFilter implements ContainerRequestFilter {
         final Principal principal = containerRequestContext.getSecurityContext().getUserPrincipal();
 
 
-        final Response response =
-                Response.status(Response.Status.FORBIDDEN)
-                        .type(MediaType.APPLICATION_JSON_TYPE)
-                        .build();
-        containerRequestContext.abortWith(response);
-        session.invalidate();
+        containerRequestContext.getRequest();
+        //session.invalidate();
 
     }
 }

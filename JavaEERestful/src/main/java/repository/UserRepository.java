@@ -2,7 +2,7 @@ package repository;
 
 
 import users.User;
-import users.UserMain;
+import users.UserSampleImpl;
 import users.UserRepo;
 
 public class UserRepository implements UserRepo {
@@ -11,6 +11,6 @@ public class UserRepository implements UserRepo {
         if(!username.equalsIgnoreCase("principal")){
             return null;
         }
-        return new UserMain();
+        return new UserSampleImpl();
     }
 }

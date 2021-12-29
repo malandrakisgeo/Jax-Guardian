@@ -5,7 +5,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.gmalandrakis</groupId>
-    
     <artifactId>JavaEESecurityModule</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -14,7 +13,7 @@
             <!-- Get all the managed dependencies (which has already been tested to work together) -->
             <!--dependency>
                 <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-8-with-tools</artifactId>
+                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
                 <version>20.0.1.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -57,6 +56,12 @@
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>3.0.0</version>
         </dependency-->
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
 
     </dependencies>
 

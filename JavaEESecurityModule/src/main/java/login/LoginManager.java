@@ -1,5 +1,6 @@
 package login;
 
+import javax.annotation.ManagedBean;
 import javax.enterprise.context.ApplicationScoped;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Array;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @ApplicationScoped
+@ManagedBean
 public class LoginManager {
 
     private HashMap<String, Login> userLogins = new HashMap<>();
@@ -42,6 +44,7 @@ public class LoginManager {
     public void addLogin(String username, Login login){
         this.userLogins.put(username, login);
     }
+
     public void removeLogin(String username){
         this.userLogins.remove(username);
     }
@@ -60,6 +63,7 @@ public class LoginManager {
     public Login getloginfromsession(String sessionId){
         return this.activeSessions.get(sessionId);
     }
+
 
 
 

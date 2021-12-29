@@ -1,5 +1,7 @@
 package endpoints;
 
+import login.LoginService;
+import tokens.TokenGeneratorService;
 import users.User;
 
 import javax.annotation.security.DeclareRoles;
@@ -11,12 +13,10 @@ import javax.inject.Inject;
 import javax.security.enterprise.authentication.mechanism.http.AutoApplySession;
 import javax.servlet.annotation.HttpConstraint;
 import javax.servlet.annotation.ServletSecurity;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
+import javax.ws.rs.*;
 
-import javax.ws.rs.Path; //Wildfly will not initialize it if it is jakarta instead of javax!
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
@@ -52,15 +52,7 @@ public class JaxRsEndpoints {
         return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
     }
 
-    @POST
-    @PermitAll
-    @Path("/login")
-    public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password, @HeaderParam("rememberMe") Boolean rememberMe ){
-        /*
-        * */
 
-        return null;
-    }
 
 }
 

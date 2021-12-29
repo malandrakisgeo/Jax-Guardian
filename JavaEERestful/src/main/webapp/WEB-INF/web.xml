@@ -13,29 +13,6 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
-    <!--security-constraint>
-        <web-resource-collection>
-            <web-resource-name>JaxRsEndpoints</web-resource-name>
-            <url-pattern>/endpoint</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>principal</role-name>
-        </auth-constraint>
-    </security-constraint-->
-
-
-    <!--listener>
-        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
-    </listener>
-    <servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>other</realm-name>
-    </login-config-->
-
 
 
     <security-constraint>
@@ -48,7 +25,13 @@
         </auth-constraint>
     </security-constraint>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>login</web-resource-name>
+            <url-pattern>/login/*</url-pattern>
+        </web-resource-collection>
 
+    </security-constraint>
 
     <security-role>
         <role-name>principal</role-name>
