@@ -4,7 +4,7 @@ A customized Java EE security module for Jax-RS endpoints.
 
 Goal: Secure a JAX-RS RESTful API with a customized Java-EE compliant security module.
 
-I started working on it to get more familiar with the Java EE security standards, and perhaps help others with this as well.
+I started working on it to get more familiar with the Java EE security standards, CDI, and Wildfly servers.
 
 The project is under construction. So far it has been tested and works on Wildfly 25. 
 
@@ -32,3 +32,7 @@ a key for the username in the hashmap. If any, both sessions are invalidated, al
 
 With the current implementation of the mechanism, if one uses this module for a website, the users may receive an email for suspicious login attempts in case they e.g. delete their cookies without logging out first, and then try to login again before the session expires (less than half a minute of inactivity for a token-authenticated user, up to several minutes of inactivity for a username/password-authenticated user that rejected the cookies or did not choose "remember me").
 
+# TODOs
+-------------------------------------------------------------------------------------------------------------------------
+1. Notify the user of a suspicious login in case there of an attempted login from a country other than their usual one. 
+2. A blacklist for particular ip addresses (e.g. of anonymization VPNs or other proxies).
