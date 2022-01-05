@@ -1,22 +1,8 @@
 package endpoints;
 
-import login.LoginService;
-import tokens.TokenGeneratorService;
-import users.User;
-
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.security.enterprise.authentication.mechanism.http.AutoApplySession;
-import javax.servlet.annotation.HttpConstraint;
-import javax.servlet.annotation.ServletSecurity;
 import javax.ws.rs.*;
-
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
@@ -38,8 +24,8 @@ public class JaxRsEndpoints {
     @GET
     @Path("/getTeachers")
     @RolesAllowed({"principal"})
-    public Response getTeachers(){
-        return Response.accepted().entity("George Malandrakis!").build();
+    public Response getTeachers() {
+       return Response.accepted().entity("George Malandrakis!").build();
     }
 
     @GET
@@ -52,7 +38,24 @@ public class JaxRsEndpoints {
         return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
     }
 
+    @GET
+    @Path("/getTeachers/error")
+    public Response getTeachers22(){
+        if(securityContext.isUserInRole("principal")){
+            //return Response.accepted().entity(user.getUsername()).build();
+        }
 
+        return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
+    }
 
+    @GET
+    @Path("/getTeacherserror")
+    public Response getTeachers232(){
+        if(securityContext.isUserInRole("principal")){
+            //return Response.accepted().entity(user.getUsername()).build();
+        }
+
+        return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
+    }
 }
 
