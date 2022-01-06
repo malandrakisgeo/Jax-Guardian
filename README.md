@@ -32,7 +32,16 @@ a key for the username in the hashmap. If any, both sessions are invalidated, al
 
 With the current implementation of the mechanism, if one uses this module for a website, the users may receive an email for suspicious login attempts in case they e.g. delete their cookies without logging out first, and then try to login again before the session expires (less than half a minute of inactivity for a token-authenticated user, up to several minutes of inactivity for a username/password-authenticated user that rejected the cookies or did not choose "remember me").
 
-# TODOs
 -------------------------------------------------------------------------------------------------------------------------
+# How to use for own projects
+1. Make sure there is exactly one class that implements the interface GMAL_NotificationService, and that class is annotated with @ManagedBean. The class is suposed to take care of sending an email with details of the initial and the attempted login (IP/location, time, etc) in case someone appears to login from somewhere else.
+2. Make sure there are singleton classes implementing TokenRepo and UserRepo.
+3. Create entities for the User and the Token by implementing the respective interfaces of the module. 
+4. Create a @PermitAll annotated endpoint-class with @Path("/authError"), and a method  annotated as   @Path("/ERROR/{username}") returning your own customized message as a Response. 
+5. For deploying  to a Wildfly server, deactivate the integrated jaspi of the security domain, while keeping jaspi on, as described here:     https://stackoverflow.com/questions/70225352/why-does-this-simple-jakarta-security-example-from-soteria-work-on-payara-but-no
+
+-------------------------------------------------------------------------------------------------------------------------
+
+# TODOs
 1. Notify the user of a suspicious login in case there of an attempted login from a country other than their usual one. 
 2. A blacklist for particular ip addresses (e.g. of anonymization VPNs or other proxies).
