@@ -1,5 +1,4 @@
-# Java-EE-Security
-(Under construction!)
+# JaxGuardian (Java-EE-Security)
 A customized Java EE security module for Jax-RS endpoints.
 
 Goal: Secure a JAX-RS RESTful API with a customized Java-EE compliant security module.
