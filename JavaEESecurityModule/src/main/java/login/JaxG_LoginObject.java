@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSessionBindingListener;
 import java.io.Serializable;
 
 //@ManagedBean
-public class GMAL_LoginObject implements HttpSessionBindingListener, Serializable {
+public class JaxG_LoginObject implements HttpSessionBindingListener, Serializable {
 
     /*
         Auth h klash einai HttpSessionBindingListener.
@@ -15,15 +15,15 @@ public class GMAL_LoginObject implements HttpSessionBindingListener, Serializabl
         Auto se antidiastolh me tis HttpSessionListener, pou trexoun gia kathe session aneksarthta apo to an ginei telika login h oxi.s
      */
 
-    GMAL_LoginManager GMALLoginManager;
+    JaxG_LoginManager GMALLoginManager;
 
     private HttpSession associatedSession;
     private String ipAddress;
     private String userAgent;
     private String token;
-    private String associatedUsername; //TODO: Fundera ytterligare om det verkligen behövs här.
+    private String associatedUsername; //TODO: Fundera ytterligare om det verkligen behï¿½vs hï¿½r.
 
-    public GMAL_LoginObject(GMAL_LoginManager GMALLoginManager){
+    public JaxG_LoginObject(JaxG_LoginManager GMALLoginManager){
         this.GMALLoginManager = GMALLoginManager;
     }
 

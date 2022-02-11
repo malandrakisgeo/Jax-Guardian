@@ -17,9 +17,9 @@ import javax.security.enterprise.credential.Credential;
 import javax.servlet.http.HttpSession;
 
 import IdentityStore.FirstImplementation;
-import login.GMAL_NotificationService;
-import login.GMAL_LoginObject;
-import login.GMAL_LoginManager;
+import login.JaxG_NotificationService;
+import login.JaxG_LoginObject;
+import login.JaxG_LoginManager;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -29,7 +29,7 @@ import java.util.Base64;
 @Alternative //Avoiding org.jboss.weld.exceptions.AmbiguousResolutionException. See manuals
 @Priority(100) //Ta @Alternative einai disabled apo mona tous. Prepei na dothei priority
 //@Vetoed //Dinei to panw xeri sto default HttpAuthenticationMechanism tou org.glassfish.soteria, se wildfly 25
-public class GMAL_AuthenticationMechanism implements HttpAuthenticationMechanism {
+public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
     @FirstImplementation
     @Inject
@@ -40,10 +40,10 @@ public class GMAL_AuthenticationMechanism implements HttpAuthenticationMechanism
     private RememberMeIdentityStore rememberMeIdentityStore;
 
     @Inject
-    private GMAL_LoginManager GMALLoginManager;
+    private JaxG_LoginManager GMALLoginManager;
 
     @Inject
-    private GMAL_NotificationService gmal_notificationService;
+    private JaxG_NotificationService jaxG_notificationService;
 
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest httpServletRequest,
@@ -66,9 +66,9 @@ public class GMAL_AuthenticationMechanism implements HttpAuthenticationMechanism
             CredentialValidationResult credentialValidationResult = this.identityStore.validate(credential);
 
             if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
-                httpServletRequest.getSession().setAttribute("login", new GMAL_LoginObject(this.GMALLoginManager)); //BINDING LOGIN TO SESSION!
+                httpServletRequest.getSession().setAttribute("login", new JaxG_LoginObject(this.GMALLoginManager)); //BINDING LOGIN TO SESSION!
 
-                GMAL_LoginObject loginObject = this.manageLogin(httpMessageContext,
+                JaxG_LoginObject loginObject = this.manageLogin(httpMessageContext,
                         credentialValidationResult.getCallerPrincipal().getName(),
                         httpServletRequest.getHeader("USER-AGENT"),
                         httpServletRequest.getRemoteAddr(),
@@ -96,9 +96,9 @@ public class GMAL_AuthenticationMechanism implements HttpAuthenticationMechanism
             CredentialValidationResult credentialValidationResult = rememberMeIdentityStore.validate((RememberMeCredential) credential);
 
             if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
-                httpServletRequest.getSession().setAttribute("login", new GMAL_LoginObject(this.GMALLoginManager)); //BINDING LOGIN TO SESSION!
+                httpServletRequest.getSession().setAttribute("login", new JaxG_LoginObject(this.GMALLoginManager)); //BINDING LOGIN TO SESSION!
 
-                GMAL_LoginObject loginObject = this.manageLogin(httpMessageContext,
+                JaxG_LoginObject loginObject = this.manageLogin(httpMessageContext,
                         credentialValidationResult.getCallerPrincipal().getName(),
                         httpServletRequest.getHeader("USER-AGENT"),
                         httpServletRequest.getRemoteAddr(),
@@ -170,16 +170,16 @@ public class GMAL_AuthenticationMechanism implements HttpAuthenticationMechanism
 
         A LoginObject will be returned if the user is not already active from another session.
      */
-    private GMAL_LoginObject manageLogin(HttpMessageContext httpMessageContext, String username, String useragent, String ipAddress, String tokenId) {
+    private JaxG_LoginObject manageLogin(HttpMessageContext httpMessageContext, String username, String useragent, String ipAddress, String tokenId) {
         HttpSession httpSession = httpMessageContext.getRequest().getSession();
 
-        GMAL_LoginObject GMALLoginObject = this.GMALLoginManager.getloginfromsession(httpSession.getId()); //Each and every HttpSession has a corresponding "Login" object
+        JaxG_LoginObject GMALLoginObject = this.GMALLoginManager.getloginfromsession(httpSession.getId()); //Each and every HttpSession has a corresponding "Login" object
         GMALLoginObject.setAssociatedUsername(username);
         GMALLoginObject.setIpAddress(ipAddress);
         GMALLoginObject.setUserAgent(useragent);
         GMALLoginObject.setToken(tokenId); //null if the user logged in with credentials instead of token
 
-        GMAL_LoginObject possibleOtherLogin = this.GMALLoginManager.getLoginForUser(username);
+        JaxG_LoginObject possibleOtherLogin = this.GMALLoginManager.getLoginForUser(username);
 
         if (possibleOtherLogin == null) { //If the user is not currently active from another session
 
@@ -195,7 +195,7 @@ public class GMAL_AuthenticationMechanism implements HttpAuthenticationMechanism
             }
 
             try {
-                this.gmal_notificationService.notifyUserForLogin(GMALLoginObject, possibleOtherLogin); //Notify the user via email
+                this.jaxG_notificationService.notifyUserForLogin(GMALLoginObject, possibleOtherLogin); //Notify the user via email
                 httpMessageContext.getResponse().sendRedirect(httpMessageContext.getRequest().getContextPath() + httpMessageContext.getRequest().getServletPath()+ "/authError/ERROR/" + username); //and return a proper response
             } catch (IOException e) {
                 e.printStackTrace();

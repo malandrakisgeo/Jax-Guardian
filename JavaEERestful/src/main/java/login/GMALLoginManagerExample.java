@@ -5,6 +5,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 @ManagedBean
-public class GMALLoginManagerExample extends GMAL_LoginManager {
+public class GMALLoginManagerExample extends JaxG_LoginManager {
 
 }

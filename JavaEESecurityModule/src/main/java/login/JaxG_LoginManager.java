@@ -6,16 +6,16 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashMap;
 
-public class GMAL_LoginManager {
+public class JaxG_LoginManager {
 
     @Inject
     @Singleton
     TokenRepo tokenRepo;
 
-    private HashMap<String, GMAL_LoginObject> userLogins = new HashMap<>();
-    private HashMap<String, GMAL_LoginObject> activeSessions = new HashMap<>();
+    private HashMap<String, JaxG_LoginObject> userLogins = new HashMap<>();
+    private HashMap<String, JaxG_LoginObject> activeSessions = new HashMap<>();
 
-    public void addLogin(String username, GMAL_LoginObject GMALLoginObject) {
+    public void addLogin(String username, JaxG_LoginObject GMALLoginObject) {
         this.userLogins.put(username, GMALLoginObject);
     }
 
@@ -23,11 +23,11 @@ public class GMAL_LoginManager {
         this.userLogins.remove(username);
     }
 
-    public GMAL_LoginObject getLoginForUser(String username) {
+    public JaxG_LoginObject getLoginForUser(String username) {
         return this.userLogins.get(username);
     }
 
-    public void addSession(String sessionId, GMAL_LoginObject loginEntity) {
+    public void addSession(String sessionId, JaxG_LoginObject loginEntity) {
         this.activeSessions.put(sessionId, loginEntity);
     }
 
@@ -35,13 +35,13 @@ public class GMAL_LoginManager {
         this.activeSessions.remove(sessionId);
     }
 
-    public GMAL_LoginObject getloginfromsession(String sessionId) {
+    public JaxG_LoginObject getloginfromsession(String sessionId) {
         return this.activeSessions.get(sessionId);
     }
 
 
     public void logout(String username) {
-        GMAL_LoginObject GMALLoginObject = this.getLoginForUser(username);
+        JaxG_LoginObject GMALLoginObject = this.getLoginForUser(username);
 
         if (GMALLoginObject != null) {
             GMALLoginObject.invalidateSession();

@@ -1,6 +1,6 @@
 package endpoints;
 
-import login.GMAL_LoginManager;
+import login.JaxG_LoginManager;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.SecurityContext;
 @PermitAll
 public class LogoutEndpoint {
     @Inject
-    GMAL_LoginManager GMALLoginManager;
+    JaxG_LoginManager GMALLoginManager;
 
     @Context
     SecurityContext securityContext;

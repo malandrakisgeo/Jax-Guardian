@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 @WebListener
-public class GMAL_SessionListener implements HttpSessionListener {
+public class JaxG_SessionListener implements HttpSessionListener {
     /*
         Einai WebListener gia HttpSession. Dld, tha trexei *gia kathe* session aneksarthta apo to an telika ginei login h oxi.
      */
