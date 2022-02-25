@@ -2,10 +2,12 @@ package login;
 
 import tokens.TokenRepo;
 
+import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashMap;
 
+@Vetoed //Preventing AmbiguousDependencyException (WELD-001409)
 public class JaxG_LoginManager {
 
     @Inject

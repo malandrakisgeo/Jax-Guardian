@@ -7,6 +7,7 @@ import users.User;
 
 import javax.annotation.ManagedBean;
 import javax.crypto.spec.SecretKeySpec;
+import javax.enterprise.context.Dependent;
 import javax.ws.rs.Produces;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -14,7 +15,7 @@ import java.util.Base64;
 import java.util.Set;
 import java.util.UUID;
 
-@ManagedBean //CDI injection
+@Dependent
 public class TokenGeneratorService{
 
     public String token(User user){

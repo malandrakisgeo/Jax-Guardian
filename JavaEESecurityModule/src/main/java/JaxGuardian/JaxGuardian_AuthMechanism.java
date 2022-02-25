@@ -1,6 +1,9 @@
+package JaxGuardian;
+
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
@@ -15,6 +18,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.security.enterprise.credential.Credential;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.ext.Provider;
 
 import IdentityStore.FirstImplementation;
 import login.JaxG_NotificationService;
@@ -23,12 +29,13 @@ import login.JaxG_LoginManager;
 
 import java.io.IOException;
 import java.util.Base64;
+import IdentityStore.IdentityStoreImplementation;
 
 @ApplicationScoped
 @AutoApplySession // For "Is user already logged-in?"
 @Alternative //Avoiding org.jboss.weld.exceptions.AmbiguousResolutionException. See manuals
 @Priority(100) //Ta @Alternative einai disabled apo mona tous. Prepei na dothei priority
-//@Vetoed //Dinei to panw xeri sto default HttpAuthenticationMechanism tou org.glassfish.soteria, se wildfly 25
+//@Vetoed //Dinei to panw xeri sto default HttpAuthenticationMechanism tou org.glassfish.soteria, se wildfly 2
 public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
     @FirstImplementation
@@ -77,6 +84,7 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
                 if (loginObject == null) {
                     credentialValidationResult = new CredentialValidationResult(String.valueOf(CredentialValidationResult.Status.INVALID));
+                    httpMessageContext.getRequest().getSession().invalidate();
                 }
 
                 if (loginObject!=null && httpServletRequest.getHeader("rememberMe") != null) {
@@ -107,14 +115,17 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
                 if (loginObject==null) {
                     credentialValidationResult = new CredentialValidationResult(String.valueOf(CredentialValidationResult.Status.INVALID));
+                    httpMessageContext.getRequest().getSession().invalidate();
+                }else{
+                    return httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
                 }
             }
-            return httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
         }
 
 
         httpMessageContext.getRequest().getSession().invalidate();
-        return httpMessageContext.doNothing(); //An dialekseis na epistrefei invalid, tote den tha mporeis oute na episkeftheis oute tis @PermitAll
+        return httpMessageContext.responseUnauthorized(); //An dialekseis na epistrefei invalid, tote den tha mporeis oute na episkeftheis
+        // oute tis @PermitAll
     }
 
     @Override
@@ -185,13 +196,32 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
             this.GMALLoginManager.addLogin(username, GMALLoginObject); //the user logs in successfully
             return GMALLoginObject;
-        } else { //if the user is logged in from some other active session
-            httpSession.invalidate(); //Invalidate both sessions
+        } else { //if the user is logged in from some other active session, invalidate both logins.
+
+            /* NOTE:  The initial version included these lines:
+            httpSession.invalidate();
             possibleOtherLogin.invalidateSession();
+
+            Both would invoke the valueUnbound() function of their related LoginObject, thereby removing
+            their IDs from the GMALLoginManager.
+            But that resulted to a bug, because if the current session is invalidated before all related functions in the
+            AuthMechanism complete, a new one  would be created automatically for the rest of the procedure! It will
+            include the same credentials, and create a JaxG_LoginObject too, hence making the user appear as logged in
+            despite the removal of his login-object &  related sessions.
+
+            So instead of manually invalidating the sessions, we will directly remove their IDs from the LoginManager
+            here.
+
+            */
+
+
+            this.GMALLoginManager.removeSession(httpSession.getId());
+            this.GMALLoginManager.removeSession(possibleOtherLogin.getAssociatedSession().getId());
             this.GMALLoginManager.removeLogin(username);
 
             if (tokenId != null) {
-                this.rememberMeIdentityStore.removeLoginToken(tokenId); //along with the token, which can be regarded as compromised
+                this.rememberMeIdentityStore.removeLoginToken(tokenId); //Invalidate the token too, which can be regarded
+                // as compromised
             }
 
             try {

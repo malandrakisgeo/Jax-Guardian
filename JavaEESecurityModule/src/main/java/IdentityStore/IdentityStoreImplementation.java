@@ -1,6 +1,7 @@
 package IdentityStore;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
