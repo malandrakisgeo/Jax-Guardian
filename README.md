@@ -1,11 +1,9 @@
 # JaxGuardian (Java-EE-Security)
-A customized Java EE security module for Jax-RS endpoints.
-
-Goal: Secure a JAX-RS RESTful API with a customized Java-EE compliant security module.
+A customized Java EE security module for Java web applications.
 
 I started working on it to get more familiar with the Java EE security standards, CDI, and Wildfly servers.
 
-The project is under construction. So far it has been tested and works on Wildfly 25. 
+So far it has been tested with a Resteasy project and works on Wildfly 25. 
 
 -------------------------------------------------------------------------------------------------------------------------
 # How it works
@@ -33,14 +31,23 @@ With the current implementation of the mechanism, if one uses this module for a 
 
 -------------------------------------------------------------------------------------------------------------------------
 # How to use for own projects
-1. Make sure there is exactly one class that implements the interface GMAL_NotificationService, and that class is annotated with @ManagedBean. The class is suposed to take care of sending an email with details of the initial and the attempted login (IP/location, time, etc) in case someone appears to login from somewhere else.
+1. Make sure there is exactly one class that implements the interface JaxG_NotificationService, and that class is annotated with @ManagedBean. The class is suposed to take care of sending an email with details of the initial and the attempted login (IP/location, time, etc) in case someone appears to login from somewhere else.
 2. Make sure there are singleton classes implementing TokenRepo and UserRepo.
 3. Create entities for the User and the Token by implementing the respective interfaces of the module. 
 4. Create a @PermitAll annotated endpoint-class with @Path("/authError"), and a method  annotated as   @Path("/ERROR/{username}") returning your own customized message as a Response. 
 5. For deploying  to a Wildfly server, deactivate the integrated jaspi of the security domain, while keeping jaspi on, as described here:     https://stackoverflow.com/questions/70225352/why-does-this-simple-jakarta-security-example-from-soteria-work-on-payara-but-no
 
+The folder howto includes the stackoverflow replies in case it gets deleted, as well as an adjusted wildfly standalone.xml 
 -------------------------------------------------------------------------------------------------------------------------
+# How to test with JavaEERestful
+1. Run mvn clean install in the JavaEESecurityModule and build the JavaEERestful afterwards. 
+2. Adjust the standalone.xml of your Wildfly server, or use the one in the /howto folder.
+3. Deploy JavaEERestful.war
 
+Any GET request to the localhost:8080/JavaEERestful/rest/endpoint/getCreator will return unauthorized if the username is not "principal", unless a successful session has already been established -the module will not even check the authorization headers if a cookie belongs to an active logged in user. Make sure you delete the cookie if you add invalid credentials after successfully logging in, or wait 20 minutes for the session to be invalidated.
+
+
+-------------------------------------------------------------------------------------------------------------------------
 # TODOs
 1. Notify the user of a suspicious login in case there of an attempted login from a country other than their usual one. 
 2. A blacklist for particular ip addresses (e.g. of anonymization VPNs or other proxies).

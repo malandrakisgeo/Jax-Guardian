@@ -39,7 +39,6 @@ public class JaxG_LoginObject implements HttpSessionBindingListener, Serializabl
     @Override
     public void valueUnbound(HttpSessionBindingEvent event) {
         this.GMALLoginManager.removeSession(this.associatedSession.getId());
-        //TODO: Perhaps temporarily (e.g. for a month) save  details about the session or the login for security reasons in some db?
         if(this.GMALLoginManager.getLoginForUser(this.associatedUsername)!= null && this.GMALLoginManager.getLoginForUser(this.associatedUsername).hashCode() == this.hashCode()){
             this.GMALLoginManager.removeLogin(this.associatedUsername);
         }
