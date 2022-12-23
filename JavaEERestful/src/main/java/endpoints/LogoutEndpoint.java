@@ -14,7 +14,7 @@ import javax.ws.rs.core.SecurityContext;
 @PermitAll
 public class LogoutEndpoint {
     @Inject
-    JaxG_LoginManager GMALLoginManager;
+    JaxG_LoginManager loginManager;
 
     @Context
     SecurityContext securityContext;
@@ -23,7 +23,7 @@ public class LogoutEndpoint {
     @Path("/logout")
     public Response logout() {
         if(this.securityContext.getUserPrincipal() !=null){
-            this.GMALLoginManager.logout(this.securityContext.getUserPrincipal().getName());
+            this.loginManager.logout(this.securityContext.getUserPrincipal().getName());
         };
 
         return Response.accepted().build();

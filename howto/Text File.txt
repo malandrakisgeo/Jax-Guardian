@@ -1,0 +1,13 @@
+
+Solution
+
+The WildFly server needs additional configuration:
+
+    Edit the other Application Security Domain, enter image description here set the Integrated JASPI property to off. enter image description here
+
+    Reload the server enter image description here
+
+There is also a script for this on: https://github.com/wildfly/quickstart/tree/main/ee-security#configure-the-server
+
+
+(thank you https://stackoverflow.com/users/1968258/marcos-zolnowski !)

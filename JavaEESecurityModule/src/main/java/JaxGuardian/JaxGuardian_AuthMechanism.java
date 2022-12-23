@@ -3,7 +3,6 @@ package JaxGuardian;
 import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
@@ -18,9 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.security.enterprise.credential.Credential;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.Priorities;
-import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.ext.Provider;
 
 import IdentityStore.FirstImplementation;
 import login.JaxG_NotificationService;
@@ -29,7 +25,6 @@ import login.JaxG_LoginManager;
 
 import java.io.IOException;
 import java.util.Base64;
-import IdentityStore.IdentityStoreImplementation;
 
 @ApplicationScoped
 @AutoApplySession // For "Is user already logged-in?"
@@ -47,7 +42,7 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
     private RememberMeIdentityStore rememberMeIdentityStore;
 
     @Inject
-    private JaxG_LoginManager GMALLoginManager;
+    private JaxG_LoginManager jaxGLoginManager;
 
     @Inject
     private JaxG_NotificationService jaxG_notificationService;
@@ -67,13 +62,13 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
         }
 
         if (credential instanceof UsernamePasswordCredential) {
-            if(httpServletRequest.getHeader("rememberMe") == null){
-                httpMessageContext.getRequest().getSession().setMaxInactiveInterval(20 * 60); //The session expires after 20minutes of inactivity.
-            }
             CredentialValidationResult credentialValidationResult = this.identityStore.validate(credential);
 
             if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
-                httpServletRequest.getSession().setAttribute("login", new JaxG_LoginObject(this.GMALLoginManager)); //BINDING LOGIN TO SESSION!
+                if(httpServletRequest.getHeader("rememberMe") == null){
+                    httpMessageContext.getRequest().getSession().setMaxInactiveInterval(20 * 60); //The session expires after 20minutes of inactivity.
+                }
+                httpServletRequest.getSession().setAttribute("login", new JaxG_LoginObject(this.jaxGLoginManager)); //BINDING LOGIN TO SESSION!
 
                 JaxG_LoginObject loginObject = this.manageLogin(httpMessageContext,
                         credentialValidationResult.getCallerPrincipal().getName(),
@@ -84,7 +79,7 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
                 if (loginObject == null) {
                     credentialValidationResult = new CredentialValidationResult(String.valueOf(CredentialValidationResult.Status.INVALID));
-                    httpMessageContext.getRequest().getSession().invalidate();
+                    //httpMessageContext.getRequest().getSession().invalidate();
                 }
 
                 if (loginObject!=null && httpServletRequest.getHeader("rememberMe") != null) {
@@ -93,10 +88,10 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
                     loginObject.setToken(loginToken);
                     httpServletResponse.addCookie(new Cookie("GMAL_TOKEN", loginToken)); //Enallaktika
                 }
-
+                return httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
             }
 
-            return httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
+
         } else if (credential instanceof RememberMeCredential) {
             httpMessageContext.getRequest().getSession().setMaxInactiveInterval(20); //The session expires after 20seconds of inactivity.
 
@@ -104,7 +99,7 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
             CredentialValidationResult credentialValidationResult = rememberMeIdentityStore.validate((RememberMeCredential) credential);
 
             if (credentialValidationResult.getStatus().equals(CredentialValidationResult.Status.VALID)) {
-                httpServletRequest.getSession().setAttribute("login", new JaxG_LoginObject(this.GMALLoginManager)); //BINDING LOGIN TO SESSION!
+                httpServletRequest.getSession().setAttribute("login", new JaxG_LoginObject(this.jaxGLoginManager)); //BINDING LOGIN TO SESSION!
 
                 JaxG_LoginObject loginObject = this.manageLogin(httpMessageContext,
                         credentialValidationResult.getCallerPrincipal().getName(),
@@ -184,18 +179,18 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
     private JaxG_LoginObject manageLogin(HttpMessageContext httpMessageContext, String username, String useragent, String ipAddress, String tokenId) {
         HttpSession httpSession = httpMessageContext.getRequest().getSession();
 
-        JaxG_LoginObject GMALLoginObject = this.GMALLoginManager.getloginfromsession(httpSession.getId()); //Each and every HttpSession has a corresponding "Login" object
-        GMALLoginObject.setAssociatedUsername(username);
-        GMALLoginObject.setIpAddress(ipAddress);
-        GMALLoginObject.setUserAgent(useragent);
-        GMALLoginObject.setToken(tokenId); //null if the user logged in with credentials instead of token
+        JaxG_LoginObject jaxGLoginObject = this.jaxGLoginManager.getloginfromsession(httpSession.getId()); //Each and every HttpSession has a corresponding "Login" object
+        jaxGLoginObject.setAssociatedUsername(username);
+        jaxGLoginObject.setIpAddress(ipAddress);
+        jaxGLoginObject.setUserAgent(useragent);
+        jaxGLoginObject.setToken(tokenId); //null if the user logged in with credentials instead of token
 
-        JaxG_LoginObject possibleOtherLogin = this.GMALLoginManager.getLoginForUser(username);
+        JaxG_LoginObject possibleOtherLogin = this.jaxGLoginManager.getLoginForUser(username);
 
         if (possibleOtherLogin == null) { //If the user is not currently active from another session
 
-            this.GMALLoginManager.addLogin(username, GMALLoginObject); //the user logs in successfully
-            return GMALLoginObject;
+            this.jaxGLoginManager.addLogin(username, jaxGLoginObject); //the user logs in successfully
+            return jaxGLoginObject;
         } else { //if the user is logged in from some other active session, invalidate both logins.
 
             /* NOTE:  The initial version included these lines:
@@ -215,9 +210,9 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
             */
 
 
-            this.GMALLoginManager.removeSession(httpSession.getId());
-            this.GMALLoginManager.removeSession(possibleOtherLogin.getAssociatedSession().getId());
-            this.GMALLoginManager.removeLogin(username);
+            this.jaxGLoginManager.removeSession(httpSession.getId());
+            this.jaxGLoginManager.removeSession(possibleOtherLogin.getAssociatedSession().getId());
+            this.jaxGLoginManager.removeLogin(username);
 
             if (tokenId != null) {
                 this.rememberMeIdentityStore.removeLoginToken(tokenId); //Invalidate the token too, which can be regarded
@@ -225,7 +220,7 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
             }
 
             try {
-                this.jaxG_notificationService.notifyUserForLogin(GMALLoginObject, possibleOtherLogin); //Notify the user via email
+                this.jaxG_notificationService.notifyUserForLogin(jaxGLoginObject, possibleOtherLogin); //Notify the user via email
                 httpMessageContext.getResponse().sendRedirect(httpMessageContext.getRequest().getContextPath() + httpMessageContext.getRequest().getServletPath()+ "/authError/ERROR/" + username); //and return a proper response
             } catch (IOException e) {
                 e.printStackTrace();

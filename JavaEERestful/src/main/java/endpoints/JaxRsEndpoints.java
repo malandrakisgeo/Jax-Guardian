@@ -22,31 +22,12 @@ public class JaxRsEndpoints {
     SecurityContext securityContext;
 
     @GET
-    @Path("/getTeachers")
+    @Path("/getCreator")
     @RolesAllowed({"principal"})
     public Response getTeachers() {
        return Response.accepted().entity("George Malandrakis!").build();
     }
 
-    @GET
-    @Path("/getTeachers2")
-    public Response getTeachers2(){
-        if(securityContext.isUserInRole("principal")){
-            //return Response.accepted().entity(user.getUsername()).build();
-        }
-
-        return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
-    }
-
-    @GET
-    @Path("/getTeachers/error")
-    public Response getTeachers22(){
-        if(securityContext.isUserInRole("principal")){
-            //return Response.accepted().entity(user.getUsername()).build();
-        }
-
-        return Response.noContent().status(Response.Status.UNAUTHORIZED).build();
-    }
 
     @GET
     @Path("/getTeacherserror")
