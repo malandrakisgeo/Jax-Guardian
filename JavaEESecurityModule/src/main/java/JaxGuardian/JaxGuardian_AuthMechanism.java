@@ -78,7 +78,8 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
 
 
                 if (loginObject == null) {
-                    credentialValidationResult = new CredentialValidationResult(String.valueOf(CredentialValidationResult.Status.INVALID));
+                //TODO: sth
+                   // credentialValidationResult = new CredentialValidationResult(String.valueOf(CredentialValidationResult.Status.INVALID));
                     //httpMessageContext.getRequest().getSession().invalidate();
                 }
 
@@ -87,8 +88,9 @@ public class JaxGuardian_AuthMechanism implements HttpAuthenticationMechanism {
                     String loginToken = this.rememberMeIdentityStore.generateLoginToken(credentialValidationResult.getCallerPrincipal(), credentialValidationResult.getCallerGroups());
                     loginObject.setToken(loginToken);
                     httpServletResponse.addCookie(new Cookie("GMAL_TOKEN", loginToken)); //Enallaktika
+                    return httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
                 }
-                return httpMessageContext.notifyContainerAboutLogin(credentialValidationResult);
+                
             }
 
 
